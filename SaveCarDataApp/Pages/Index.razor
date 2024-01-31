@@ -1,0 +1,136 @@
+﻿@page "/"
+@using SaveCarDataApp.Models
+@using System.ComponentModel.DataAnnotations
+
+
+<PageTitle>Cars</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Add A New Car</MudText>
+
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
+            <EditForm Model="@newCar" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator></DataAnnotationsValidator>
+
+                <div class="form-group">
+                    <label for="brand">Brand</label>
+                    <InputText id="brand" @bind-Value="newCar.Brand" class="form-control" />
+                    <ValidationMessage For="@(() => newCar.Brand)" />
+                </div>
+
+                <div class="form-group">
+                    <label for="year">Year</label>
+                    <InputNumber id="year" @bind-Value="newCar.Year" class="form-control" />
+
+                </div>
+
+                <div class="form-group">
+                    <label for="model">Model</label>
+                    <InputText id="model" @bind-Value="newCar.Model" class="form-control" />
+
+                </div>
+
+                <div class="form-check">
+                    <label class="form-check-label">
+                        <InputCheckbox @bind-Value="newCar.SpareWheel" class="form-check-input" />
+                        Spare Wheel
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Add Car</button>
+
+
+                <br />
+                <br />
+
+                @if (saved)
+                {
+                    <p>The New Car has been saved.</p>
+                }
+
+                @if (error)
+                {
+                    <p>Sorry Something went wrong</p>
+                }
+
+            </EditForm>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+
+
+@* <EditForm Model="@newCar" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+
+    <div class="form-group">
+        <label for="brand">Brand</label>
+        <InputText id="brand" @bind-Value="newCar.Brand" class="form-control" />
+        <ValidationMessage For="@(() => newCar.Brand)" />
+    </div>
+
+    <div class="form-group">
+        <label for="year">Year</label>
+        <InputNumber id="year" @bind-Value="newCar.Year" class="form-control" />
+        
+    </div>
+
+    <div class="form-group">
+        <label for="model">Model</label>
+        <InputText id="model" @bind-Value="newCar.Model" class="form-control" />
+        
+    </div>
+
+    <div class="form-check">
+        <label class="form-check-label">
+            <InputCheckbox @bind-Value="newCar.SpareWheel" class="form-check-input" />
+            Spare Wheel
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Car</button>
+
+
+    <br />
+    <br />
+
+    @if (saved)
+    {
+        <p>The New Car has been saved.</p>
+    }
+
+    @if (error)
+    {
+        <p>Sorry Something went wrong</p>
+    }
+
+</EditForm> *@
+
+
+@inject Data.AppDbContext dbContext
+@code {
+    public Car newCar = new Car();
+    public bool saved = false;
+    public bool error = false;
+
+
+    private async Task HandleValidSubmit()
+    {
+        saved = false;
+        error = false;
+        try
+        {
+            dbContext.Cars.Add(newCar);
+            await dbContext.SaveChangesAsync();
+            saved = true;
+            newCar = new Car();
+        }
+        catch (Exception)
+        {
+            error = true;
+            throw;
+        }
+        
+    }
+}
